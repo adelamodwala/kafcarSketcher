@@ -10,21 +10,16 @@ logger.info('app loaded');
 function main() {
     logger.info('window loaded');
 
-    // let socketManager = new SocketManager('localhost:9050/demo/name');
-    // socketManager.init();
-
     let sketcher = new Sketcher(window, document, document.getElementById('sketchpad'), (posX, posY) => {
         logger.debug(posX, posY);
-        // if(socketManager.isOpen()) {
-        //     socketManager.sendMsg({
-        //         x: posX, y: posY
-        //     });
-        // }
         fetch('https://ethoca-stream-epistemic-spina.cfapps.io/event', {
             method: 'POST',
-            body: {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 x: posX, y: posY
-            }
+            })
         }).then((resp) => {
            logger.debug(resp);
         });

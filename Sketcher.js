@@ -12,6 +12,7 @@ class Sketcher {
         this.ctx = null;
         this.size = 3;
         this.mouseDown = 0;
+        this.pointsDrawn = 0;
 
         // Variables to keep track of the mouse position and left-button status
         this.mouseX = null;
@@ -41,12 +42,15 @@ class Sketcher {
         this.ctx.closePath();
         this.ctx.fill();
 
-        this.onDraw(x, y);
+        this.onDraw(x, this.canvasApi.height - y);
+        this.pointsDrawn += 1;
     }
 
     // Clear the canvas context using the canvas width and height
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvasApi.width, this.canvasApi.height);
+        logger.info("points drawn this time: " + this.pointsDrawn);
+        this.pointsDrawn = 0;
     }
 
     // Keep track of the mouse button being pressed and draw a dot at current location
