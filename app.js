@@ -1,14 +1,45 @@
-import logger from './logger';
 import Rx from 'rx';
 
-console.log('app loaded');
+import LoggerFactory from './logger';
+const logger = LoggerFactory.getLogger('app');
+import Sketcher from './Sketcher';
+import SocketManager from './SocketManager';
 
-let myArr = [];
-for(let i = 0; i < 10; i++) {
-  myArr = [
-    ...myArr,
-    i * i
-  ]
-  console.log(myArr);
+logger.info('app loaded');
+
+function main() {
+    logger.info('window loaded');
+
+    // let socketManager = new SocketManager('localhost:9050/demo/name');
+    // socketManager.init();
+
+    let sketcher = new Sketcher(window, document, document.getElementById('sketchpad'), (posX, posY) => {
+        logger.debug(posX, posY);
+        // if(socketManager.isOpen()) {
+        //     socketManager.sendMsg({
+        //         x: posX, y: posY
+        //     });
+        // }
+        fetch('https://ethoca-stream-epistemic-spina.cfapps.io/event', {
+            method: 'POST',
+            body: {
+                x: posX, y: posY
+            }
+        }).then((resp) => {
+           logger.debug(resp);
+        });
+    });
+    sketcher.init();
+
+
+    let el = document.getElementById('sketchpadapp');
+    let clearButton = document.getElementById('clearbutton');
+    clearButton.addEventListener('click', () => {
+        logger.debug('clear!');
+        sketcher.clearCanvas();
+    }, false);
+    logger.debug(el);
+
 }
-logger('bob','belcher');
+
+window.onload = main;
